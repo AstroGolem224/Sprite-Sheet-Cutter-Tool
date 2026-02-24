@@ -23,8 +23,24 @@ run_automated_tests() {
     return 127
   fi
 
+  echo "[agent-test] checking runtime dependencies"
+  if ! "$py_bin" - <<'PY'
+import importlib.util
+import sys
+
+required = ("PIL", "numpy", "scipy")
+missing = [name for name in required if importlib.util.find_spec(name) is None]
+if missing:
+    print("[agent-test] missing packages: " + ", ".join(missing))
+    sys.exit(1)
+PY
+  then
+    echo "[agent-test] install runtime deps with: pip install -r requirements.txt"
+    return 3
+  fi
+
   echo "[agent-test] running compile checks"
-  "$py_bin" -m compileall .
+  "$py_bin" -m compileall -q .
 
   echo "[agent-test] checking CLI contract"
   "$py_bin" main.py --help > /dev/null

@@ -109,6 +109,7 @@ Use this standard behavior:
 2. Run CLI contract check (`main.py --help`).
 3. If `tests/` exists, run `pytest -q`; fail clearly if `pytest` is missing.
 4. Print a short PASS/FAIL summary for handoff.
+5. If runtime deps are missing, fail with install hint (`pip install -r requirements.txt`).
 
 Implementation:
 
