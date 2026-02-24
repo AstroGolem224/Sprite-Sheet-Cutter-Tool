@@ -22,6 +22,7 @@ Guide for humans and coding agents working in this repository.
 - `sprite_cropper.py` - tight crop + resize
 - `config.py` - default settings
 - `build_guide.py` - build helper content
+- `agent_test.sh` - standard automated test runner for agents
 - `docs/SPRITE_CUTTER_TOOL.md` - detailed German documentation
 
 ## 3) Local setup
@@ -55,7 +56,13 @@ python main.py -i "sheet.png" -o "output"
 
 ## 6) Validation checklist
 
-When touching processing logic or CLI parameters, run at least:
+Primary automated check entrypoint (agents should use this first):
+
+```bash
+bash ./agent_test.sh
+```
+
+Equivalent manual checks (fallback):
 
 ```bash
 python -m compileall .
@@ -93,3 +100,18 @@ If image pipeline changed, perform one real sample run with `-i/-o` and verify:
 - There is currently no dedicated automated test suite in this repo.
 - Prefer adding narrow tests when introducing non-trivial logic changes.
 - If adding dependencies, use the latest stable release and document why.
+
+## 10) Agent function: run_automated_tests
+
+Use this standard behavior:
+
+1. Run compile/syntax validation.
+2. Run CLI contract check (`main.py --help`).
+3. If `tests/` exists, run `pytest -q`; fail clearly if `pytest` is missing.
+4. Print a short PASS/FAIL summary for handoff.
+
+Implementation:
+
+```bash
+bash ./agent_test.sh
+```
