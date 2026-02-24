@@ -77,10 +77,14 @@ def _build_parser() -> argparse.ArgumentParser:
     return p
 
 
+def _is_frozen() -> bool:
+    return getattr(sys, "frozen", False)
+
+
 def main(argv: list[str] | None = None) -> int:
     args = _build_parser().parse_args(argv)
 
-    if args.gui:
+    if args.gui or (_is_frozen() and not args.input):
         from gui import main as gui_main
         gui_main()
         return 0

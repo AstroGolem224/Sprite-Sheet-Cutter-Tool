@@ -33,9 +33,30 @@ Install:
 pip install -r requirements.txt
 ```
 
+## Standalone Executable
+
+A pre-built Windows `.exe` is available in `dist/`. Just double-click
+**`SpriteSheetCutter.exe`** — no Python installation needed.
+
+To rebuild the exe yourself:
+
+```bash
+pip install pyinstaller
+python -m PyInstaller --noconfirm --onefile --windowed \
+  --name SpriteSheetCutter \
+  --collect-data customtkinter \
+  --hidden-import PIL --hidden-import numpy \
+  --hidden-import scipy --hidden-import scipy.ndimage \
+  main.py
+```
+
+The result lands in `dist/SpriteSheetCutter.exe` (~56 MB).
+
 ## Usage
 
 ### GUI (recommended)
+
+Double-click `SpriteSheetCutter.exe`, or run from source:
 
 ```bash
 python main.py --gui
