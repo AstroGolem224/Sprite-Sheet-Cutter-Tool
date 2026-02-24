@@ -115,6 +115,8 @@ output/
 
 ## Architecture
 
+![Architecture Diagram](SpriteSheetCutter_Architecture.png)
+
 ```
 main.py               Entry point (--gui for UI, otherwise CLI)
 gui.py                Dark-themed customtkinter GUI

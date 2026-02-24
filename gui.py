@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import logging
+import os
 import queue
+import subprocess
 import sys
 import threading
 from pathlib import Path
@@ -52,6 +54,13 @@ class QueueHandler(logging.Handler):
 # ---------------------------------------------------------------------------
 # Application
 # ---------------------------------------------------------------------------
+def _app_dir() -> Path:
+    """Return the directory the app is running from (works for .exe and source)."""
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).parent
+    return Path(__file__).resolve().parent
+
+
 class SpriteCutterApp(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -74,13 +83,26 @@ class SpriteCutterApp(ctk.CTk):
         row = 0
 
         # ── Title bar ────────────────────────────────────────────────
+        title_frame = ctk.CTkFrame(self, fg_color="transparent")
+        title_frame.grid(row=row, column=0, padx=24, pady=(24, 2), sticky="ew")
+        title_frame.grid_columnconfigure(0, weight=1)
+        row += 1
+
         title = ctk.CTkLabel(
-            self, text="Sprite Sheet Cutter",
+            title_frame, text="Sprite Sheet Cutter",
             font=ctk.CTkFont(family=FONT_UI, size=20, weight="bold"),
             text_color=TEXT,
         )
-        title.grid(row=row, column=0, padx=24, pady=(24, 2), sticky="w")
-        row += 1
+        title.grid(row=0, column=0, sticky="w")
+
+        help_btn = ctk.CTkButton(
+            title_frame, text="?", width=32, height=32,
+            font=ctk.CTkFont(family=FONT_UI, size=14, weight="bold"),
+            fg_color=BG_INPUT, hover_color=BORDER, text_color=TEXT,
+            border_width=1, border_color=BORDER, corner_radius=4,
+            command=self._open_guide,
+        )
+        help_btn.grid(row=0, column=1, sticky="e")
 
         subtitle = ctk.CTkLabel(
             self,
@@ -228,6 +250,16 @@ class SpriteCutterApp(ctk.CTk):
             corner_radius=4, border_width=1,
         )
         entry.grid(row=1, column=col, padx=6, pady=(0, 4))
+
+    # ------------------------------------------------------------------
+    # Help / guide
+    # ------------------------------------------------------------------
+    def _open_guide(self):
+        pdf = _app_dir() / "SpriteSheetCutter_Guide.pdf"
+        if pdf.exists():
+            os.startfile(str(pdf))
+        else:
+            self._append_log(f"[WARN]   Guide not found at {pdf}")
 
     # ------------------------------------------------------------------
     # Folder dialogs
