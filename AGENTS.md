@@ -115,3 +115,5 @@ Implementation:
 ```bash
 bash ./agent_test.sh
 ```
+
+`agent_test.sh` auto-detects `python` or `python3`.
